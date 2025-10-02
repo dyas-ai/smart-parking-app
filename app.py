@@ -190,12 +190,15 @@ with st.sidebar:
         # Check if there's a dashboard action to redirect
         if st.session_state.dashboard_action:
             if st.session_state.dashboard_action == "quick_park":
-                page = "Quick Park (QR Scan)"
+                default_page = 1  # Index for "Quick Park (QR Scan)"
             elif st.session_state.dashboard_action == "pre_book":
-                page = "Pre-Book Parking"
+                default_page = 2  # Index for "Pre-Book Parking"
             elif st.session_state.dashboard_action == "my_bookings":
-                page = "My Bookings"
+                default_page = 3  # Index for "My Bookings"
+            else:
+                default_page = 0
             st.session_state.dashboard_action = None  # Reset after redirect
+            page = st.radio("", ["Dashboard", "Quick Park (QR Scan)", "Pre-Book Parking", "My Bookings", "Logout"], index=default_page)
         else:
             page = st.radio("", ["Dashboard", "Quick Park (QR Scan)", "Pre-Book Parking", "My Bookings", "Logout"])
 
