@@ -18,6 +18,8 @@ if 'current_booking' not in st.session_state:
     st.session_state.current_booking = None
 if 'bookings_history' not in st.session_state:
     st.session_state.bookings_history = []
+if 'dashboard_action' not in st.session_state:
+    st.session_state.dashboard_action = None
 if 'parking_data' not in st.session_state:
     # Initialize parking facilities
     st.session_state.parking_data = {
@@ -184,7 +186,18 @@ with st.sidebar:
         page = st.radio("", ["Login", "About"])
     else:
         st.success(f"Welcome, {st.session_state.user_name}!")
-        page = st.radio("", ["Dashboard", "Quick Park (QR Scan)", "Pre-Book Parking", "My Bookings", "Logout"])
+        
+        # Check if there's a dashboard action to redirect
+        if st.session_state.dashboard_action:
+            if st.session_state.dashboard_action == "quick_park":
+                page = "Quick Park (QR Scan)"
+            elif st.session_state.dashboard_action == "pre_book":
+                page = "Pre-Book Parking"
+            elif st.session_state.dashboard_action == "my_bookings":
+                page = "My Bookings"
+            st.session_state.dashboard_action = None  # Reset after redirect
+        else:
+            page = st.radio("", ["Dashboard", "Quick Park (QR Scan)", "Pre-Book Parking", "My Bookings", "Logout"])
 
 # Login Page
 if page == "Login" and not st.session_state.logged_in:
@@ -243,6 +256,27 @@ elif page == "About":
 # Dashboard
 elif page == "Dashboard":
     st.header("📊 Dashboard")
+    
+    # Quick Action Buttons
+    st.subheader("🚀 Quick Actions")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("📱 Quick Park (Scan QR)", use_container_width=True, type="primary"):
+            st.session_state.dashboard_action = "quick_park"
+            st.rerun()
+    
+    with col2:
+        if st.button("📅 Pre-Book Parking", use_container_width=True, type="secondary"):
+            st.session_state.dashboard_action = "pre_book"
+            st.rerun()
+    
+    with col3:
+        if st.button("📋 My Bookings", use_container_width=True, type="secondary"):
+            st.session_state.dashboard_action = "my_bookings"
+            st.rerun()
+    
+    st.markdown("---")
     
     # Stats
     col1, col2, col3, col4 = st.columns(4)
